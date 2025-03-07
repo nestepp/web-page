@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сайт для тебя</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+        p {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .image-section img {
+            max-width: 400px; /* Максимальная ширина */
+            height: auto; /* Авто-высота для сохранения пропорций */
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 18px;
+            background: #ff7b00;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #e66b00;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ПОЗДРАВЛЯЮ ТЕБЯ С ПРАЗДНИКОМ!</h1>
+        <p>Это твой день и я хочу тебе пожелать, чтобы ты оставалась такой же</p>
+        <ul style="font-size: 22px; text-align: left; margin-left: 20px;">
+            <li>И - Игривой</li>
+            <li>Р - Радостной и радующей!</li>
+            <li>И - Искренне улыбающейся!</li>
+            <li>Н - Несравнимо красивой!</li>
+            <li>А - Амбициозной и самой яркой женщиной!</li>
+        </ul>
+        
+        <div class="image-section">
+            <img src="c8cc24bba37a25c009647b8875aae0e3.jpg">
+            <p>Одним словом - Ириной! Действительно, ведь чтобы быть лучшей женщиной, достаточно просто быть тобой!
+                Искренне хочу пожелать тебе, чтобы ты делала то, что любишь и любила то, что делаешь!</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>Небольшой квест для тебя</h1>
+        <p>Введи правильно названия 5 песен (без авторов) и получи сюрприз!
+            Для старта/остановки нажми на кнопки снизу
+        </p>
+        
+        <div class="quiz">
+            <div>
+                <button onclick="toggleSong(0)">🎵 Песня 1</button>
+                <input type="text" id="answer0" placeholder="Название песни">
+                <span class="status" id="status0"></span>
+            </div>
+            <div>
+                <button onclick="toggleSong(1)">🎵 Песня 2</button>
+                <input type="text" id="answer1" placeholder="Название песни">
+                <span class="status" id="status1"></span>
+            </div>
+            <div>
+                <button onclick="toggleSong(2)">🎵 Песня 3</button>
+                <input type="text" id="answer2" placeholder="Название песни">
+                <span class="status" id="status2"></span>
+            </div>
+            <div>
+                <button onclick="toggleSong(3)">🎵 Песня 4</button>
+                <input type="text" id="answer3" placeholder="Название песни">
+                <span class="status" id="status3"></span>
+            </div>
+            <div>
+                <button onclick="toggleSong(4)">🎵 Песня 5</button>
+                <input type="text" id="answer4" placeholder="Название песни">
+                <span class="status" id="status4"></span>
+            </div>
+            <button class="btn" onclick="checkAnswers()">Проверить</button>
+        </div>
+        
+        <div id="popup" class="popup" style="display: none;">
+            <h2>Поздравляю!</h2>
+            <p>Ты правильно назвала все названия песен!
+                Твой приз - промокод на скидку 100% на праздничный обед!
+                Для получения приза нужно написать мне в тг и ввести промокод - ОБЕДДЛЯСАМОЙКРАСИВОЙЖЕНЩИНЫ
+            </p>
+            <button onclick="closePopup()">Закрыть</button>
+        </div>
+        
+        <audio id="song" src=""></audio>
+    </div>
+    
+    <script>
+        const correctAnswers = [
+            ["Космонавты", "космонавты"],
+            ["Roar", "roar"],
+            ["Пофигу", "пофигу"],
+            ["beautiful pain", "Beautiful Pain", "Beautiful pain"],
+            ["Ариведерчи", "ариведерчи"]
+        ];
+        const songLinks = [
+            "moja-mishel-kosmonavty.mp3",
+            "katy-perry-roar.mp3",
+            "bi-2-pofigu.mp3",
+            "eminem-feat.-sia-beautiful-pain.mp3",
+            "zemfira-arivederchi.mp3"
+        ];
+        
+        let currentSong = null;
+        function toggleSong(index) {
+            let song = document.getElementById("song");
+            if (currentSong === index && !song.paused) {
+                song.pause();
+                song.currentTime = 0;
+                currentSong = null;
+            } else {
+                song.src = songLinks[index];
+                song.play();
+                currentSong = index;
+            }
+        }
+        
+        function checkAnswers() {
+            let allCorrect = true;
+            for (let i = 0; i < 5; i++) {
+                let userAnswer = document.getElementById("answer" + i).value.trim().toLowerCase();
+                let status = document.getElementById("status" + i);
+                if (correctAnswers[i].some(answer => answer.toLowerCase() === userAnswer)) {
+                    status.textContent = "✔";
+                    status.style.color = "green";
+                } else {
+                    status.textContent = "✖";
+                    status.style.color = "red";
+                    allCorrect = false;
+                }
+            }
+            if (allCorrect) {
+                document.getElementById("popup").style.display = "block";
+            }
+        }
+        
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
